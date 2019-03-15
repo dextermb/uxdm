@@ -175,7 +175,7 @@ class Migrator
         for ($page = 1; $page < PHP_INT_MAX; $page++) {
             $dataRows = $this->getSourceDataRows($page);
 
-            if (!$dataRows) {
+            if (empty($dataRow)) {
                 break;
             }
 
