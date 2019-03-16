@@ -26,6 +26,27 @@ class Migrator
     private $showProgressBar = false;
     private $progressBar;
 
+    /** @var array|DataRow[] $cache */
+    protected $cache = [];
+
+    /**
+     * @return array
+     */
+    public function getCache()
+    {
+      return $this->cache;
+    }
+
+    /**
+     * @return $this
+     */
+    public function clearCache()
+    {
+      $this->cache = [];
+
+      return $this;
+    }
+
     public function setSource(SourceInterface $source)
     {
         $this->source = $source;
@@ -153,7 +174,7 @@ class Migrator
         }
     }
 
-    public function migrate()
+    public function migrate(bool $cache = false)
     {
         $this->sanityCheck();
 
@@ -178,6 +199,12 @@ class Migrator
             if (!$dataRows) {
                 break;
             }
+
+            if ($cache) {
+				$this->cache = array_merge(
+					$this->cache, $dataRows
+				);
+			}
 
             foreach ($dataRows as $key => $dataRow) {
                 $dataRow->prepare($this->keyFields, $this->fieldMap, $dataItemManipulator ? $dataItemManipulator : $nullDataItemManipulation);
